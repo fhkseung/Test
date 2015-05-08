@@ -1,0 +1,77 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans:beans xmlns="http://www.springframework.org/schema/mvc"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:beans="http://www.springframework.org/schema/beans"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/mvc http://www.springframework.org/schema/mvc/spring-mvc.xsd
+						http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+						http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context.xsd">
+
+
+
+	<!-- DispatcherServlet Context: defines this servlet's request-processing infrastructure -->
+	
+	
+	
+	<!-- Enables the Spring MVC @Controller programming model -->
+	<!-- annotation-driven을 추가함으로 추가되는 대표적인 객체 2가지가 있는데 HandlerMaping과 HandlerAdapte이다.   -->
+	<!-- HandlerMapping : 세부컨트롤러를 특정 URI와 매핑시키는 역할을 하는 HandlerMapping 객체가 추가된다.-->
+	<!-- Handler Adapter : Spring에서 컨트롤러 메소드가 자유롭게 만들어질 수 있게 하기 위해서 DispatcherServlet이 자유롭게 만들어진 세부컨트롤러의
+	 메소드명, 반환타입, 매개변수 등을 알 수 있도록 하는 역할을 한다. 주된 구현 방법은 RefilectionClass를 이용해서 invoke메소드를 사용한다.  -->
+	<annotation-driven />
+
+
+	
+	<!-- Handles HTTP GET requests for /resources/** by efficiently serving up static resources in the ${webappRoot}/resources directory -->
+	<!-- 정적인 문서들을 저장하는 곳, HTTP요청이 들어왔을때 해당 폴더를 전부 로딩하는 곳이 이 폴더이다. 
+	 	JSP와는 다른곳에 저장한다는 것을 참조하고, JSP는 공개하지 않기 위한 것이고, 해당 폴더는 공개되도 상관없다는 차이가 있다.-->
+	<resources mapping="/resources/**" location="/resources/" />
+	
+	
+	
+	
+	<!-- 아래가 Spring재단에서 만들어 놓은 JSP페이지를 저장해놓는 디폴트 위치가 된다. 개발자가 해당 위치에 jsp페이지를 만들어서 넣어놓으면
+	     Spring이 아래 설정을 참조해서 페이지에 결과값을 보내게 된다. -->
+	<!-- Resolves views selected for rendering by @Controllers to .jsp resources in the /WEB-INF/views directory -->
+	<beans:bean class="org.springframework.web.servlet.view.InternalResourceViewResolver">
+		<beans:property name="prefix" value="/WEB-INF/views/" />
+		<beans:property name="suffix" value=".jsp" />
+	</beans:bean>
+	
+	
+	
+	
+	<!-- 사용자 정의 세부 컨트롤러 등록 : id가 클라이언트가 요청하는 주소값이 되고, class가 요청에 대응하는 실행 컨트롤러가 된다.-->
+	<!-- xml방식은 구식방법임 <beans:bean id="/sample" class="kr.or.kosta.community.web.controller.SampleController"></beans:bean>-->
+	<!-- 어노테이션을 사용한 의존관계설정을 위해서 스캔할 패키지를 설정. -->
+	<context:component-scan base-package="kr.or.kosta" />
+	
+	
+	
+	<!-- 인터셉터 등록 -->
+	<interceptors>
+		<interceptor>
+			<mapping path="user/*"/>
+			<beans:bean class="kr.or.kosta.community.web.interceptor.AuthCheckInterceptor"></beans:bean>
+		</interceptor>
+			<beans:bean class="kr.or.kosta.community.web.interceptor.RequestSetupInterceptor"></beans:bean>
+			<beans:bean class="kr.or.kosta.community.web.interceptor.LoggerInterceptor"></beans:bean>
+	</interceptors>
+	
+	
+	<!-- 글로벌 예외처리 -->
+	<beans:bean class="org.springframework.web.servlet.handler.SimpleMappingExceptionResolver">
+		<beans:property name="exceptionMappings">
+			<beans:props>
+				<beans:prop key="kr.or.kosta.community.web.exception.CommunityException">Errors/Error_500</beans:prop>
+				<beans:prop key="java.lang.Exception">Errors/Error_500</beans:prop>
+			</beans:props>
+		</beans:property>
+	</beans:bean>
+	
+	
+	
+	<context:component-scan base-package="kr.or.kosta" />
+	
+	
+</beans:beans>

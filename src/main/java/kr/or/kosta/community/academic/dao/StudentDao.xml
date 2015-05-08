@@ -1,0 +1,28 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<!DOCTYPE mapper PUBLIC "-//mybatis.org//DTD Mapper 3.0//EN"
+                 "http://mybatis.org/dtd/mybatis-3-mapper.dtd">
+
+
+<!-- 매퍼의 네임스페이스 이름과 인터페이스의 이름이 반드시 같아야만 매핑이 된다! -->
+<mapper namespace="kr.or.kosta.community.academic.dao.StudentDao">
+	
+	<!-- 전체학생 조회 -->
+	<!-- select id와 메소드 이름이 일치해야만 sql이 적용된다! -->
+	<select id="getAll" resultType="student" >
+		SELECT ssn, name, score
+		FROM student
+	</select>
+	
+	<insert id="add" parameterType="student">
+		INSERT INTO student
+		VALUES(#{ssn}, #{name}, #{score})
+	</insert>
+	
+	
+	<select id="findBySsn" parameterType="java.lang.String" resultType="student">
+		SELECT ssn, name, score
+		FROM student
+		WHERE ssn = #{ssn}
+	</select>
+	
+</mapper>

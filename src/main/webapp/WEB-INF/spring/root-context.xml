@@ -1,0 +1,58 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<beans xmlns="http://www.springframework.org/schema/beans"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xmlns:context="http://www.springframework.org/schema/context"
+	xsi:schemaLocation="http://www.springframework.org/schema/beans http://www.springframework.org/schema/beans/spring-beans.xsd
+		http://www.springframework.org/schema/context http://www.springframework.org/schema/context/spring-context-4.1.xsd">
+	
+	<!-- Root Context: defines shared resources visible to all other web components -->
+
+
+	<!-- DB설정정보가 저장되어있는 프로퍼티스를 참고하기 위한 경로 지정 -->
+	<bean id="propertyPlaceholderConfigurer" class="org.springframework.beans.factory.config.PropertyPlaceholderConfigurer">
+        <property name="locations" value="classpath:config/db-config.properties" />
+    </bean>
+	
+	
+	
+	<!-- Apache DBCP API 제공 DataSource(커넥션풀 지원) 등록 -->
+	<bean id="dataSource" class="org.apache.commons.dbcp2.BasicDataSource">
+		<property name="driverClassName" value="${driver}"/>
+		<property name="url" value="${url}"/>
+		<property name="username" value="${username}"/>
+		<property name="password" value="${password}"/>
+		<property name="initialSize" value="2"/>
+	</bean>
+	
+	
+	
+	
+	<!-- JdbcTemplate 등록 -->
+	<bean id="jdbcTemplate" class="org.springframework.jdbc.core.JdbcTemplate">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	
+	
+	
+	<!-- MyBatis JDBC 트랜잭션 매니저 설정 -->
+	<bean id="transactionManager" class="org.springframework.jdbc.datasource.DataSourceTransactionManager">
+		<property name="dataSource" ref="dataSource"/>
+	</bean>
+	
+	<!-- MyBatis SqlSessionFactory 설정 -->
+	<bean id="sqlSessionFactory" class="org.mybatis.spring.SqlSessionFactoryBean">
+		<property name="dataSource" ref="dataSource"/>
+		<property name="configLocation" value="classpath:config/mybatis-config.xml"/>
+		<property name="mapperLocations">
+			<list>
+				<value>classpath:kr/or/kosta/community/academic/dao/StudentDao.xml</value>
+			</list>
+		</property>
+	</bean>
+	
+	
+	
+	<!--  어노테이션으로 클래스를 빈객체로 사용하기 위해 스캔을 할 패키지 지정 -->		
+	<context:component-scan base-package="kr.or.kosta.community" />
+</beans>

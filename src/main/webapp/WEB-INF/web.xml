@@ -1,0 +1,66 @@
+<?xml version="1.0" encoding="UTF-8"?>
+<web-app version="2.5" xmlns="http://java.sun.com/xml/ns/javaee"
+	xmlns:xsi="http://www.w3.org/2001/XMLSchema-instance"
+	xsi:schemaLocation="http://java.sun.com/xml/ns/javaee http://java.sun.com/xml/ns/javaee/web-app_2_5.xsd">
+
+	<!-- The definition of the Root Spring Container shared by all Servlets and Filters -->
+	<!-- 모든 서블릿들이 공유하는 파라미터를 등록할떄 context-param을 사용하는 것이다. -->
+	<context-param>
+		<param-name>contextConfigLocation</param-name>
+		<param-value>/WEB-INF/spring/root-context.xml</param-value>
+	</context-param>
+	
+	
+	
+	
+	<!-- Creates the Spring Container shared by all Servlets and Filters -->
+	<!--  아파치 톰캣이 구동되는 것을 이벤트라고 가정하고 이벤트가 발생했을때 초기화작업을 해주고자 할때 
+		사용되는 것이 리스너 이다. 
+		아래에 servlet이 클라이언트의 요청이 들어왔을때 실행되는 것이라면, 이 listener는 
+		WAS가 구동될때 실행되는 것이다.
+		이 리스너가 비즈니스로직과 영속성을 담당하는 ApplicationContext를 실행시키는 역할을 한다. -->
+	<listener>
+		<listener-class>org.springframework.web.context.ContextLoaderListener</listener-class>
+	</listener>
+
+
+
+
+
+	<!-- Processes application requests -->
+	<servlet>
+		<servlet-name>appServlet</servlet-name>
+		<servlet-class>org.springframework.web.servlet.DispatcherServlet</servlet-class>
+		<init-param>
+			<param-name>contextConfigLocation</param-name>
+			<param-value>/WEB-INF/spring/appServlet/servlet-context.xml</param-value>
+		</init-param>
+		<load-on-startup>1</load-on-startup>
+	</servlet>
+	<servlet-mapping>
+		<servlet-name>appServlet</servlet-name>
+		<url-pattern>/</url-pattern>
+	</servlet-mapping>
+	
+	
+	
+	
+	<!-- 한글 인코딩을 하기위한 필터 설정 : 필터를 web.xml에 설정해 줌으로써
+	 서버에 들어오는 모든 클라이언트의 요청에 대해서 적용하게 된다. -->
+	<filter>
+		<filter-name>CharacterEncodingFilter</filter-name>
+		<filter-class>org.springframework.web.filter.CharacterEncodingFilter</filter-class>
+		<init-param>
+			<param-name>encoding</param-name>
+			<param-value>utf-8</param-value>
+		</init-param>
+	</filter>
+	<filter-mapping>
+		<filter-name>CharacterEncodingFilter</filter-name>
+		<url-pattern>/*</url-pattern>
+	</filter-mapping>
+
+
+
+
+</web-app>
